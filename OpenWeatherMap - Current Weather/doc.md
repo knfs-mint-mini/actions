@@ -58,10 +58,9 @@ Here's how to configure the `config.json` file for the OpenWeatherMap - Current 
 
 **Configuration Steps:**
 
-1.  **`id`:** Replace `"your_unique_id"` with a unique identifier for this action.
-2.  **`actionName`:**  Keep `"OpenWeatherMap - Current Weather"` or modify it as needed.
-3.  **`iconUrl`:**  You can change the icon URL if desired.
-4.  **`envVariant`:**
+1.  **`actionName`:**  Keep `"OpenWeatherMap - Current Weather"` or modify it as needed.
+2.  **`iconUrl`:**  You can change the icon URL if desired.
+3.  **`envVariant`:**
     *   Replace `"YOUR_API_KEY"` with the API key you obtained from OpenWeatherMap.  **This is crucial for the action to work.**
 
 ## 3. Using the Action
