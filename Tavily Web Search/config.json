@@ -14,12 +14,33 @@
                     "description": "The search query to look up on the web"
                 },
                 "search_depth": {
-                    "type": "integer",
+                    "type": "string",
+                    "enum": [
+                        "basic",
+                        "advanced"
+                    ],
                     "description": "The depth of search, higher values return more results"
                 },
+                "topic": {
+                    "type": "string",
+                    "enum": [
+                        "general",
+                        "news",
+                        "finance"
+                    ],
+                    "description": "The topic of search, a general topic will perform a broad search, while a new topic will use our New agent to find tailored information"
+                },
                 "include_answers": {
-                    "type": "boolean",
+                    "type": "string",
+                    "enum": [
+                        "basic",
+                        "advanced"
+                    ],
                     "description": "Whether to include direct answers from sources"
+                },
+                "max_results": {
+                    "type": "number",
+                    "description": "The maximum number of search result to return"
                 }
             },
             "required": [
@@ -29,10 +50,10 @@
     },
     "actionHandle": {
         "code": {
-            "function": "async function tavily_web_search({ params, envi, prev }) {\n  try {\n    const query = params.query;\n    const search_depth = params.search_depth || 3; // Default depth\n    const include_answers = params.include_answers || false; // Default value\n    const apiKey = envi.tavilyApiKey;  //Get API key from envi\n\n    const url = 'https://api.tavily.com/search';\n    const headers = {\n      'Content-Type': 'application/json',\n      'Authorization': `Bearer ${apiKey}`\n    };\n\n    const body = JSON.stringify({\n      query: query,\n      search_depth: search_depth,\n      include_answers: include_answers\n    });\n\n    const response = await fetch(url, {\n      method: 'POST',\n      headers: headers,\n      body: body\n    });\n\n    const data = await response.json();\n\n    if (!response.ok) {\n      throw new Error(data.error || 'Tavily API Error');\n    }\n\n    return data;\n\n  } catch (error) {\n    console.error('Tavily Web Search Error:', error);\n    return { error: error.message };\n  }\n}\n"
+            "function": "async function tavily_web_search({ params, envi, prev }) {\n    try {\n        const query = params.query;\n        const search_depth = params.search_depth || \"basic\"; \n        const max_results = params.max_results || 5;\n        const include_answers = params.include_answers ||\"basic\";\n        const apiKey = envi.tavilyApiKey;\n\n        const url = 'https://api.tavily.com/search';\n        const headers = {\n            'Content-Type': 'application/json',\n            'Authorization': `Bearer ${apiKey}`\n        };\n\n        const body = JSON.stringify({\n            query: query,\n            search_depth: search_depth,\n            include_answers: include_answers\n        });\n\n        const response = await fetch(url, {\n            method: 'POST',\n            headers: headers,\n            body: body\n        });\n\n        const data = await response.json();\n\n        if (!response.ok) {\n            throw new Error(data.error || 'Tavily API Error');\n        }\n\n        if (!data || !data.results || data.results.length === 0) {\n            return \"<p>No results found.</p>\";\n        }\n\n        let html = \"<ul>\";\n        data.results.forEach(result => {\n            html += `<li>\n                 <a href=\"${result.url}\" target=\"_blank\">${result.title}</a>\n                 <p>${result.content || ''}</p>\n               </li>`;\n        });\n        html += \"</ul>\";\n\n        return html;\n\n    } catch (error) {\n        console.error('Tavily Web Search Error:', error);\n        return `<p>Error: ${error.message}</p>`; \n    }\n}\n"
         }
     },
     "envVariant": {
-        "tavilyApiKey": "API KEY"
+        "tavilyApiKey": "<ENTER API KEY>"
     }
 }
