@@ -16,8 +16,9 @@ This repository contains:
 
 [//]: # (Dynamically generate this list in the future)
 
-*   [OpenWeatherMap - Current Weather](./openweathermap-current-weather/README.md): Get current weather data for a specific city.
-*   [Tavily Web Search](./tavily-web-search/README.md):  Search the web in real-time using the Tavily API.
+*   [OpenWeatherMap - Current Weather](/): Get current weather data for a specific city.
+*   [Tavily Web Search](./tavily-web-search/doc.md):  Search the web in real-time using the Tavily API.
+*   [Render Chart](./render-chart/doc.md): Render chart for data
 
 ## Contributing
 
