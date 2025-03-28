@@ -1,0 +1,118 @@
+{
+    "actionName": "Render Chart",
+    "iconUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRehhGKP0Zn-R-3IJya9iRP0Y3peQRh_Zob5w&s",
+    "overview": "Render Chart",
+    "typeAction": "code",
+    "geminiApiFunctionSpec": {
+        "name": "render_chart",
+        "description": "Render Chart for data",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "description": "Type of chart (bar, line, pie, doughnut, radar, polarArea, scatter, mixed)"
+                },
+                "labels": {
+                    "type": "array",
+                    "description": "Labels for the chart",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "datasets": {
+                    "type": "array",
+                    "description": "Array of datasets for the chart",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "label": {
+                                "type": "string",
+                                "description": "Dataset label"
+                            },
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                }
+                            },
+                            "backgroundColor": {
+                                "type": "string",
+                                "description": "Background color"
+                            },
+                            "borderColor": {
+                                "type": "string",
+                                "description": "Border color"
+                            },
+                            "borderWidth": {
+                                "type": "number",
+                                "description": "Border width"
+                            },
+                            "type": {
+                                "type": "string",
+                                "description": "Optional: type of dataset (for mixed charts)"
+                            }
+                        },
+                        "required": [
+                            "label",
+                            "data"
+                        ]
+                    }
+                },
+                "options": {
+                    "type": "object",
+                    "description": "Additional Chart.js options",
+                    "properties": {
+                        "responsive": {
+                            "type": "boolean",
+                            "description": "Enable responsive mode"
+                        },
+                        "scales": {
+                            "type": "object",
+                            "description": "Scale configuration",
+                            "properties": {
+                                "y": {
+                                    "type": "object",
+                                    "description": "Y-axis scale options",
+                                    "properties": {
+                                        "beginAtZero": {
+                                            "type": "boolean",
+                                            "description": "Start Y-axis from zero"
+                                        }
+                                    },
+                                    "required": [
+                                        "beginAtZero"
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "y"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "responsive",
+                        "scales"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Name of the chart"
+                }
+            },
+            "required": [
+                "type",
+                "labels",
+                "datasets",
+                "name",
+                "options"
+            ]
+        }
+    },
+    "actionHandle": {
+        "code": {
+            "function": "async function render_chart({ params, envi, prev }) {\n  try {\n    const id = crypto.randomUUID();\n    const viewBoxType = \"chart\";\n\n    const chartType = params.type;\n    const labels = params.labels;\n    const datasets = params.datasets;\n    const additionalOptions = params.options || { responsive: true, scales: { y: { beginAtZero: true } } };\n\n    // Kiểm tra nếu là biểu đồ hỗn hợp\n    const isMixedChart = datasets.some(ds => ds.type);\n    \n    const chartConfig = {\n      type: isMixedChart ? 'bar' : chartType, // Nếu có mix chart, default là bar\n      data: {\n        labels,\n        datasets\n      },\n      options: additionalOptions\n    };\n\n    return {\n      id,\n      isBlock: true,\n      type: viewBoxType,\n      extendData: {\n        id,\n        chartConfig,\n        chartName: params.name\n      }\n    };\n  } catch (error) {\n    console.error(\"render_chart Error:\", error);\n    return { error: error.message };\n  }\n}\n"
+        }
+    },
+    "envVariant": {}
+}
